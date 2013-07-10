@@ -41,8 +41,9 @@
 					<h1>Learning ElasticSearch</h1>
 					<h3></h3>
 					<p>
-						<a href="http://web.gnuer.org">Anurag Patel</a> / <a href="http://www.redhat.com">Red Hat</a>
+						<a href="http://web.gnuer.org">Anurag Patel</a> &mdash; <a href="http://www.redhat.com">Red Hat</a>
 					</p>
+					<p><small>Fifth Elephant 2013, Bangalore.</small></p>
 				</section>
 
 				<section>
@@ -152,7 +153,7 @@ $ curl -XGET http://localhost:9200/gems/document/pry-0.5.9
 
 
 				<section>
-					<h2>ElasticSearch terminology</h2>
+					<h2>ElasticSearch Terminology</h2>
 				</section>
 
 
@@ -276,20 +277,35 @@ $ curl -XGET http://localhost:9200/gems/document/pry-0.5.9
 				</section>
 
 				<section>
-					<h2>High Availability</h2>
-					<p>
-					</p>
+					<h2>ElasticSearch Workshop</h2>
 				</section>
 
 				<section>
-					<h2>High Availability</h2>
-					<p>
+					<h2>Download and start</h2>
+					<p>Download ElasticSearch from <a href="http://www.elasticsearch.org/download">http://www.elasticsearch.org/download</a>
 					</p>
+					<pre><code data-trim>
+							# service elasticsearch start
+					</code></pre>
+					<pre><code data-trim>
+							# /etc/init.d/elasticsearch start
+					</code></pre>
+					<pre><code data-trim>
+							# ./bin/elasticsearch -f
+					</code></pre>
 				</section>
 
 				<section>
-					<h2>High Availability</h2>
+					<h2>elasticsearch-head</h2>
 					<p>
+					<pre><code data-trim>
+# cd /usr/share/elasticsearch
+# ./bin/plugin -install mobz/elasticsearch-head
+					</code></pre>
+					<pre><code data-trim>
+# cd /opt/elasticsearch-0.90.2
+# ./bin/plugin -install mobz/elasticsearch-head
+					</code></pre>
 					</p>
 				</section>
 
