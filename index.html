@@ -76,14 +76,272 @@
 				</section>
 
 				<section>
-					<h2></h2>
+					<h2>Distributed</h2>
 					<p>
-						Press <strong>ESC</strong> to enter the slide overview.
-					</p>
-					<p>
-						Hold down alt and click on any element to zoom in on it using <a href="http://lab.hakim.se/zoom-js">zoom.js</a>. Alt + click anywhere to zoom back out.
+						Start small and scale horizontally out of the box. For more capacity, just add more nodes and the cluster reorganize itself.
 					</p>
 				</section>
+
+				<section>
+					<h2>High Availability</h2>
+					<p><img src="images/highly-available.png" alt="Highly Availabile"/></p>
+					<p>
+						ElasticSearch clusters detect and remove failed nodes, and reorganize themselves.
+					</p>
+				</section>
+
+				<section>
+					<h2>Multi Tenancy</h2>
+					<pre><code data-trim contenteditable>
+$ curl -XPUT http://localhost:9200/people
+
+$ curl -XPUT http://localhost:9200/gems
+
+$ curl -XPUT http://localhost:9200/gems/document/pry-0.5.9
+
+$ curl -XGET http://localhost:9200/gems/document/pry-0.5.9
+						</code></pre>
+					<p>A cluster can host multiple indices which can be queried independently, or as a group.
+					</p>
+
+				</section>
+
+				<section>
+					<h2>Document Oriented</h2>
+					<pre><code data-trim contenteditable>
+{
+    "_id": "pry-0.5.9", 
+    "_index": "gems", 
+    "_source": {
+        "authors": [
+            "John Mair (banisterfiend)"
+        ], 
+        "autorequire": null, 
+        "bindir": "bin", 
+        "cert_chain": [], 
+        "date": "Sun Feb 20 11:00:00 UTC 2011", 
+        "default_executable": null, 
+        "description": "attach an irb-like session to any object at runtime", 
+        "email": "jrmair@gmail.com"
+    }
+}
+					</code></pre>
+					<p>Store complex real world entities in Elasticsearch as structured JSON documents.
+					</p>
+				</section>
+
+				<section>
+					<h2>RESTful API</h2>
+					<p>Almost any operation can be performed using a simple RESTful interface using <strong>JSON</strong> over <strong>HTTP</strong>.
+					</p>
+					<ul>
+						<li>curl -X GET</li>
+						<li>curl -X PUT</li>
+						<li>curl -X POST</li>
+						<li>curl -X DELETE</li>
+					</ul>
+				</section>
+
+
+				<section>
+					<h2>Apache Lucene</h2>
+					<p>ElasticSearch is built on top of Apache Lucene. Lucene is a high performance, full-featured Information Retrieval library, written in Java.
+					</p>
+					<p><img src="images/lucene-logo.png" alt="Apache Lucene Logo"/></p>
+				</section>
+
+
+				<section>
+					<h2>ElasticSearch terminology</h2>
+				</section>
+
+
+				<section>
+					<h2>Document</h2>
+					<p>$ curl -XGET http://localhost:9200/gems/document/pry-0.5.9</p>
+					<pre><code data-trim contenteditable>
+{
+    "_id": "pry-0.5.9", 
+    "_index": "gems", 
+    "_source": {
+        "authors": [
+            "John Mair (banisterfiend)"
+        ], 
+        "autorequire": null, 
+        "bindir": "bin", 
+        "cert_chain": [], 
+        "date": "Sun Feb 20 11:00:00 UTC 2011", 
+        "default_executable": null, 
+        "description": "attach an irb-like session to any object at runtime", 
+        "email": "jrmair@gmail.com", 
+        "executables": [
+            "pry"
+        ], 
+        "extensions": [], 
+        "extra_rdoc_files": [], 
+        "files": [
+            "lib/pry/commands.rb", 
+            "lib/pry/command_base.rb", 
+            "lib/pry/completion.rb", 
+            "lib/pry/core_extensions.rb", 
+            "lib/pry/hooks.rb", 
+            "lib/pry/print.rb", 
+            "lib/pry/prompts.rb", 
+            "lib/pry/pry_class.rb", 
+            "lib/pry/pry_instance.rb", 
+            "lib/pry/version.rb", 
+            "lib/pry.rb", 
+            "examples/example_basic.rb", 
+            "examples/example_commands.rb", 
+            "examples/example_command_override.rb", 
+            "examples/example_hooks.rb", 
+            "examples/example_image_edit.rb", 
+            "examples/example_input.rb", 
+            "examples/example_input2.rb", 
+            "examples/example_output.rb", 
+            "examples/example_print.rb", 
+            "examples/example_prompt.rb", 
+            "test/test.rb", 
+            "test/test_helper.rb", 
+            "CHANGELOG", 
+            "LICENSE", 
+            "README.markdown", 
+            "Rakefile", 
+            ".gemtest", 
+            "bin/pry"
+        ], 
+        "has_rdoc": true, 
+        "homepage": "http://banisterfiend.wordpress.com", 
+        "id": "pry-0.5.9", 
+        "licenses": [], 
+        "name": "pry", 
+        "platform": "ruby", 
+        "post_install_message": null, 
+        "rdoc_options": [], 
+        "require_paths": [
+            "lib"
+        ], 
+        "requirements": [], 
+        "rubyforge_project": null, 
+        "rubygems_version": "1.5.2", 
+        "signing_key": null, 
+        "specification_version": 3, 
+        "summary": "attach an irb-like session to any object at runtime", 
+        "test_files": [], 
+        "version": {
+            "prerelease": null, 
+            "version": "0.5.9"
+        }
+    }, 
+    "_type": "document", 
+    "_version": 1, 
+    "exists": true
+}
+					</code></pre>
+					<p>In ElasticSearch, everything is stored as a Document. Document can be addressed and retrieved by querying their attributes.</p>
+				</section>
+
+				<section>
+					<h2>Document Types</h2>
+					<p>Lets us specify document properties, so we can differentiate the objects.
+					</p>
+				</section>
+
+				<section>
+					<h2>Shard</h2>
+					<p>Each Shard is a separate <em>native</em> Lucene Index. Lets us overcome RAM limitations, hard disk capacity.
+					</p>
+				</section>
+
+				<section>
+					<h2>Replica</h2>
+					<p>
+						An exact copy of primary Shard. Helps in setting up HA, increases query throughput.
+					</p>
+				</section>
+
+				<section>
+					<h2>Index</h2>
+					<p>ElasticSearch stores its data in logical Indices. Think of a table, collection or a database.
+					</p>
+					<p><img src="images/gem-index-head.png" alt="ElasticSearch Index"/></p>
+					<p>An Index has atleast 1 primary Shard, and 0 or more Replicas.
+					</p>
+				</section>
+
+				<section>
+					<h2>Cluster</h2>
+					<p>A collection of cooperating ElasticSearch nodes. Gives better availability and performance via Index Sharding and Replicas.
+					</p>
+				</section>
+
+				<section>
+					<h2>High Availability</h2>
+					<p>
+					</p>
+				</section>
+
+				<section>
+					<h2>High Availability</h2>
+					<p>
+					</p>
+				</section>
+
+				<section>
+					<h2>High Availability</h2>
+					<p>
+					</p>
+				</section>
+
+				<section>
+					<h2>High Availability</h2>
+					<p>
+					</p>
+				</section>
+
+				<section>
+					<h2>High Availability</h2>
+					<p>
+					</p>
+				</section>
+
+				<section>
+					<h2>High Availability</h2>
+					<p>
+					</p>
+				</section>
+
+				<section>
+					<h2>High Availability</h2>
+					<p>
+					</p>
+				</section>
+
+				<section>
+					<h2>High Availability</h2>
+					<p>
+					</p>
+				</section>
+
+				<section>
+					<h2>High Availability</h2>
+					<p>
+					</p>
+				</section>
+
+				<section>
+					<h2>High Availability</h2>
+					<p>
+					</p>
+				</section>
+
+				<section>
+					<h2>High Availability</h2>
+					<p>
+					</p>
+				</section>
+
+
 
 				<section>
 					<h2>Pretty Code</h2>
