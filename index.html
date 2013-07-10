@@ -79,7 +79,7 @@
 				<section>
 					<h2>Distributed</h2>
 					<p>
-						Start small and scale horizontally out of the box. For more capacity, just add more nodes and the cluster reorganize itself.
+						Start small and scale horizontally out of the box. For more capacity, just add more nodes and let the cluster reorganize itself.
 					</p>
 				</section>
 
@@ -297,6 +297,7 @@ $ curl -XGET http://localhost:9200/gems/document/pry-0.5.9
 
 				<section>
 					<h2>elasticsearch-head</h2>
+					<p>A site plugin to view contents of ElasticSearch cluster.</p>
 					<p>
 					<pre><code data-trim>
 # cd /usr/share/elasticsearch
@@ -307,77 +308,235 @@ $ curl -XGET http://localhost:9200/gems/document/pry-0.5.9
 # ./bin/plugin -install mobz/elasticsearch-head
 					</code></pre>
 					</p>
+					<p>Restart ElasticSearch. Plugins are detected and loaded on serice startup.</p>
 				</section>
 
 				<section>
-					<h2>High Availability</h2>
+					<h2>RESTful interface</h2>
 					<p>
+					<pre><code data-trim>
+$ curl -XGET 'http://localhost:9200/'
+					</code></pre>
 					</p>
-				</section>
-
-				<section>
-					<h2>High Availability</h2>
 					<p>
-					</p>
-				</section>
-
-				<section>
-					<h2>High Availability</h2>
-					<p>
-					</p>
-				</section>
-
-				<section>
-					<h2>High Availability</h2>
-					<p>
-					</p>
-				</section>
-
-				<section>
-					<h2>High Availability</h2>
-					<p>
-					</p>
-				</section>
-
-				<section>
-					<h2>High Availability</h2>
-					<p>
-					</p>
-				</section>
-
-				<section>
-					<h2>High Availability</h2>
-					<p>
-					</p>
-				</section>
-
-				<section>
-					<h2>High Availability</h2>
-					<p>
-					</p>
-				</section>
-
-
-
-				<section>
-					<h2>Pretty Code</h2>
-					<pre><code data-trim contenteditable>
-function linkify( selector ) {
-  if( supports3DTransforms ) {
-
-    var nodes = document.querySelectorAll( selector );
-
-    for( var i = 0, len = nodes.length; i &lt; len; i++ ) {
-      var node = nodes[i];
-
-      if( !node.className ) ) {
-        node.className += ' roll';
-      }
-    };
-  }
+					<pre><code data-trim>
+{
+  "ok" : true,
+  "status" : 200,
+  "name" : "Drake, Frank",
+  "version" : {
+    "number" : "0.90.2",
+    "snapshot_build" : false,
+    "lucene_version" : "4.3.1"
+  },
+  "tagline" : "You Know, for Search"
 }
 					</code></pre>
-					<p>Courtesy of <a href="http://softwaremaniacs.org/soft/highlight/en/description/">highlight.js</a>.</p>
+					</p>
+				</section>
+
+				<section>
+					<h2>Create Index</h2>
+					<p>
+					<pre><code data-trim>
+$ curl -XPUT 'http://localhost:9200/gems'
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+{
+  "ok":true,
+  "acknowledged":true
+}
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Cluster status</h2>
+					<p>
+					<pre><code data-trim>
+$ curl -XGET 'localhost:9200/_status'
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+{"ok":true,"_shards":{"total":20,"successful":10,"failed":0},
+"indices":{"gems":{"index":{"primary_size":"495b","primary_size_in_bytes":495,
+"size":"495b","size_in_bytes":495},"translog":{"operations":0},
+"docs":{"num_docs":0,"max_doc":0,"deleted_docs":0},"merges":
+{"current":0,"current_docs":0,"current_size":"0b","current_size_in_bytes":0,
+"total":0,"total_time":"0s","total_time_in_millis":0,"total_docs":0,
+"total_size":"0b","total_size_in_bytes":0},
+...
+...
+...
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Pretty Output</h2>
+					<p>
+					<pre><code data-trim>
+$ curl -XGET 'localhost:9200/_status?pretty'
+					</code></pre>
+					<pre><code data-trim>
+$ curl -XGET 'localhost:9200/_status' | python -mjson.tool
+					</code></pre>
+					<pre><code data-trim>
+$ curl -XGET 'localhost:9200/_status' | json_reformat
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+{
+    "ok": true,
+    "_shards": {
+        "total": 20,
+        "successful": 10,
+        "failed": 0
+    },
+    "indices": {
+        "gems": {
+            "index": {
+                "primary_size": "495b",
+                "primary_size_in_bytes": 495,
+                "size": "495b",
+                "size_in_bytes": 495
+            },
+...
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Delete Index</h2>
+					<p>
+					<pre><code data-trim>
+$ curl -XDELETE 'http://localhost:9200/gems'
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+{
+  "ok":true,
+  "acknowledged":true
+}
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Create custom Index</h2>
+					<p>
+					<pre><code data-trim>
+{
+    "settings" : {
+        "index" : {
+            "number_of_shards" : 6,
+            "number_of_replicas" : 2
+        }
+    }
+}
+					</code></pre>
+					<pre><code data-trim>
+$ curl -XPUT 'http://localhost:9200/gems' -d @body.json
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+{
+  "ok":true,
+  "acknowledged":true
+}
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Create Index</h2>
+					<p>
+					<pre><code data-trim>
+$ curl -XPUT http://localhost:9200/gems
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+{
+  "ok":true,
+  "acknowledged":true
+}
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Create Index</h2>
+					<p>
+					<pre><code data-trim>
+$ curl -XPUT http://localhost:9200/gems
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+{
+  "ok":true,
+  "acknowledged":true
+}
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Create Index</h2>
+					<p>
+					<pre><code data-trim>
+$ curl -XPUT http://localhost:9200/gems
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+{
+  "ok":true,
+  "acknowledged":true
+}
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Create Index</h2>
+					<p>
+					<pre><code data-trim>
+$ curl -XPUT http://localhost:9200/gems
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+{
+  "ok":true,
+  "acknowledged":true
+}
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Create Index</h2>
+					<p>
+					<pre><code data-trim>
+$ curl -XPUT http://localhost:9200/gems
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+{
+  "ok":true,
+  "acknowledged":true
+}
+					</code></pre>
+					</p>
 				</section>
 
 
