@@ -308,7 +308,7 @@ $ curl -XGET http://localhost:9200/gems/document/pry-0.5.9
 # ./bin/plugin -install mobz/elasticsearch-head
 					</code></pre>
 					</p>
-					<p>Restart ElasticSearch. Plugins are detected and loaded on serice startup.</p>
+					<p>Restart ElasticSearch. Plugins are detected and loaded on service startup.</p>
 				</section>
 
 				<section>
@@ -551,35 +551,403 @@ $ curl -XPOST 'http://localhost:9200/gems/test/' -d @body.json
 					<h2>Custom Document IDs</h2>
 					<p>
 					<pre><code data-trim>
-$ curl -XPUT http://localhost:9200/gems
+{
+  "name": "grit", 
+  "platform": "jruby", 
+  "rubygems_version": "2.5.1", 
+  "description": "Ruby library for extracting information from a git repository.", 
+  "email": "mojombo@github.com", 
+  "has_rdoc": false,
+  "homepage": "http://github.com/mojombo/grit"
+}
+
+					</code></pre>
+					<pre><code data-trim>
+$ curl -XPUT 'http://localhost:9200/gems/test/grit-2.5.1' -d @body.json
 					</code></pre>
 					</p>
 					<p>
 					<pre><code data-trim>
 {
   "ok":true,
-  "acknowledged":true
+  "_index":"gems",
+  "_type":"test",
+  "_id":"grit-2.5.1",
+  "_version":1
+}
+					</code></pre>
+					</p>
+					<p>IDs are unique across Index. Composed of DocumentType and ID.</p>
+				</section>
+
+				<section>
+					<h2>Document Versions</h2>
+					<p>
+					<pre><code data-trim>
+$ curl -XPUT 'http://localhost:9200/gems/test/grit-2.5.1' -d @body.json
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+{
+  "ok":true,
+  "_index":"gems",
+  "_type":"test",
+  "_id":"grit-2.5.1",
+  "_version":2
 }
 					</code></pre>
 					</p>
 				</section>
 
 				<section>
-					<h2>Create Index</h2>
+					<h2>Searching Documents</h2>
 					<p>
 					<pre><code data-trim>
-$ curl -XPUT http://localhost:9200/gems
+{
+  "query": {
+    "term": {"name": "pry"}
+  }
+}
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+$ curl -XPOST http://localhost:9200/gems/_search -d @body.json | python -mjson.tool
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+{
+  "_shards": {
+    "failed": 0, 
+    "successful": 6, 
+    "total": 6
+  },
+  "hits": {
+    "hits": [
+      {
+        "_id": "MWkKgzsMRgK", 
+        "_index": "gems", 
+        "_score": 1.4054651, 
+        "_source": {
+          "description": "attach an irb-like session to any object at runtime", 
+          "email": "anurag@example.com", 
+          "has_rdoc": true, 
+          "homepage": "http://banisterfiend.wordpress.com", 
+          "name": "pry", 
+          "platform": "ruby", 
+          "rubygems_version": "1.5.2"
+        }, 
+        "_type": "test"
+      }
+    ], 
+    "max_score": 1.4054651, 
+    "total": 1
+  }, 
+  "timed_out": false, 
+  "took": 2
+}
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Counting Documents</h2>
+					<p>
+					<pre><code data-trim>
+{
+  "term": {"name": "pry"}
+}
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+$ curl -XGET http://localhost:9200/gems/test/_count -d @body.json
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+{
+    "_shards": {
+        "failed": 0, 
+        "successful": 6, 
+        "total": 6
+    }, 
+    "count": 1
+}
+					</code></pre>
+					</p>
+				</section>
+				<section>
+					<h2>Update a Document</h2>
+					<p>
+					<pre><code data-trim>
+{
+  "doc": {
+   "platform": "macruby" 
+  }
+}
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+$ curl -XPOST http://localhost:9200/gems/test/grit-2.5.1/_update -d @body.json
 					</code></pre>
 					</p>
 					<p>
 					<pre><code data-trim>
 {
   "ok":true,
-  "acknowledged":true
+  "_index":"gems",
+  "_type":"test",
+  "_id":"grit-2.5.1",
+  "_version":4
+}
+					</code></pre>
+					</p>
+					<p>The partial document is merged using simple recursive merge.</p>
+				</section>
+
+				<section>
+					<h2>Update via Script</h2>
+					<p>
+					<pre><code data-trim>
+{
+    "script" : "ctx._source.platform = vm_name",
+    "params" : {
+        "vm_name" : "rubinius"
+    }
+}
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+$ curl -XPOST http://localhost:9200/gems/test/grit-2.5.1/_update -d @body.json
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+{
+  "ok":true,
+  "_index":"gems",
+  "_type":"test",
+  "_id":"grit-2.5.1",
+  "_version":5
 }
 					</code></pre>
 					</p>
 				</section>
+
+				<section>
+					<h2>Delete Document</h2>
+					<p>
+					<pre><code data-trim>
+$ curl -XDELETE 'http://localhost:9200/gems/test/grit-2.5.1'
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+{
+  "ok":true, 
+  "found":true,
+  "_index":"gems",
+  "_type":"test",
+  "_id":"grit-2.5.1",
+  "_version":6
+}
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Put Mapping</h2>
+					<p>
+					<pre><code data-trim>
+{
+  "gem" : {
+    "properties" : {
+      "name" :        {"type" : "string", "index": "not_analyzed"},
+      "platform" :    {"type" : "string", "index": "not_analyzed"},
+      "rubygems_version" : {"type" : "string", "index": "not_analyzed"},
+      "description" : {"type" : "string", "store" : "yes"},
+      "has_rdoc" :    {"type" : "boolean"}      
+    }
+  }
+}
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+$ curl -XPUT 'http://localhost:9200/gems/gem/_mapping' -d @body.json
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+$ curl -XGET 'http://localhost:9200/gems/_mapping' | python -mjson.tool
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Index Document with Mapping</h2>
+					<p>
+					<pre><code data-trim>
+{
+  "name": "grit", 
+  "platform": "ruby", 
+  "rubygems_version": "2.5.1", 
+  "description": "Ruby library for extracting information from a git repository.", 
+  "email": "mojombo@github.com", 
+  "has_rdoc": false,
+  "homepage": "http://github.com/mojombo/grit"
+}
+					</code></pre>
+					<pre><code data-trim>
+$ curl -XPUT 'http://localhost:9200/gems/gem/grit-2.5.1' -d @body.json
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+{
+  "ok":true,
+  "_index":"gems",
+  "_type":"gem",
+  "_id":"grit-2.5.1",
+  "_version":1
+}
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Matching documents</h2>
+					<p>
+					<pre><code data-trim>
+{
+  "query": {
+    "match" : {
+        "description" : "git repository"
+    }
+  }
+}
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+$ curl -XPOST http://localhost:9200/gems/gem/_search -d @body.json
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Highlighting</h2>
+					<p>
+					<pre><code data-trim>
+{
+  "query": {
+    "match" : {
+        "description" : "git repository"
+    }
+  },
+  "highlight" : {
+        "fields" : {
+            "description" : {}
+        }
+    }
+}
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+$ curl -XPOST http://localhost:9200/gems/gem/_search -d @body.json
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+"highlight": {
+  "description": [
+    "Ruby library for extracting information from a <em>git</em> <em>repository</em>."
+  ]
+}
+					</code></pre>
+					</p>
+
+				</section>
+
+				<section>
+					<h2>Search Facets</h2>
+					<p>
+					<pre><code data-trim>
+
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Search Facets</h2>
+					<p>
+					<pre><code data-trim>
+
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Search Facets</h2>
+					<p>
+					<pre><code data-trim>
+
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Search Facets</h2>
+					<p>
+					<pre><code data-trim>
+
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Search Facets</h2>
+					<p>
+					<pre><code data-trim>
+
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Search Facets</h2>
+					<p>
+					<pre><code data-trim>
+
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Search Facets</h2>
+					<p>
+					<pre><code data-trim>
+
+					</code></pre>
+					</p>
+				</section>
+
 
 
 				<section>
