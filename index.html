@@ -879,75 +879,100 @@ $ curl -XPOST http://localhost:9200/gems/gem/_search -d @body.json
 					<h2>Search Facets</h2>
 					<p>
 					<pre><code data-trim>
-
+{
+  "query": { "match_all" : {} },
+  "facets" : {
+    "gem_names" : {
+      "terms" : { "field": "name" }
+    }
+  }
+}
 					</code></pre>
 					</p>
 					<p>
 					<pre><code data-trim>
-
+$ curl -XPOST http://localhost:9200/gems/_search -d @body.json
 					</code></pre>
 					</p>
 					<p>
 					<pre><code data-trim>
-
+...
+  "facets": {
+    "gem_names": {
+      "_type": "terms", 
+      "missing": 0, 
+      "other": 0, 
+      "terms": [
+        {
+          "count": 2, 
+          "term": "pry"
+        }, 
+        {
+          "count": 2, 
+          "term": "grit"
+        }, 
+        {
+          "count": 1, 
+          "term": "abc"
+        }
+      ], 
+      "total": 5
+    }
+  },
+  "hits": {
+    "hits": [
+...
 					</code></pre>
 					</p>
 				</section>
 
 				<section>
-					<h2>Search Facets</h2>
+					<h2>Analyzing Aadhaar's Datasets</h2>
+				</section>
+
+				<section>
+					<h2>Download Sample Dataset</h2>
 					<p>
 					<pre><code data-trim>
-
+$ mkdir ~/aadhaar
 					</code></pre>
 					</p>
 				</section>
 
 				<section>
-					<h2>Search Facets</h2>
-					<p>
-					<pre><code data-trim>
+					<h2>Additional Notes</h2>
+				</section>
 
-					</code></pre>
+				<section>
+					<h2>Index Aliases</h2>
+					<p>
 					</p>
 				</section>
 
 				<section>
-					<h2>Search Facets</h2>
+					<h2>Document Routing</h2>
 					<p>
-					<pre><code data-trim>
-
-					</code></pre>
 					</p>
 				</section>
 
 				<section>
-					<h2>Search Facets</h2>
+					<h2>Custom Analyzers</h2>
 					<p>
-					<pre><code data-trim>
-
-					</code></pre>
 					</p>
 				</section>
 
 				<section>
-					<h2>Search Facets</h2>
+					<h2>Boosting Search Results</h2>
 					<p>
-					<pre><code data-trim>
-
-					</code></pre>
 					</p>
 				</section>
 
 				<section>
-					<h2>Search Facets</h2>
+					<h2>ElasticSearch Ecosystem</h2>
 					<p>
-					<pre><code data-trim>
-
-					</code></pre>
+						A wide range of site plugins, analyzers, river plugins available from the community.
 					</p>
 				</section>
-
 
 
 				<section>
