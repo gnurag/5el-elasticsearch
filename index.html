@@ -435,7 +435,7 @@ $ curl -XDELETE 'http://localhost:9200/gems'
     "settings" : {
         "index" : {
             "number_of_shards" : 6,
-            "number_of_replicas" : 2
+            "number_of_replicas" : 0
         }
     }
 }
@@ -455,58 +455,100 @@ $ curl -XPUT 'http://localhost:9200/gems' -d @body.json
 				</section>
 
 				<section>
-					<h2>Create Index</h2>
+					<h2>Index a document</h2>
 					<p>
 					<pre><code data-trim>
-$ curl -XPUT http://localhost:9200/gems
+{
+  "name": "pry", 
+  "platform": "ruby", 
+  "rubygems_version": "1.5.2", 
+  "description": "attach an irb-like session to any object at runtime", 
+  "email": "anurag@example.com", 
+  "has_rdoc": true, 
+  "homepage": "http://banisterfiend.wordpress.com"
+}
+
+					</code></pre>
+					<pre><code data-trim>
+$ curl -XPOST 'http://localhost:9200/gems/test/' -d @body.json
 					</code></pre>
 					</p>
 					<p>
 					<pre><code data-trim>
 {
   "ok":true,
-  "acknowledged":true
+  "_index":"gems",
+  "_type":"test",
+  "_id":"lsJgxiwET6eg",
+  "_version":1
 }
 					</code></pre>
 					</p>
 				</section>
 
 				<section>
-					<h2>Create Index</h2>
+					<h2>Get document</h2>
 					<p>
 					<pre><code data-trim>
-$ curl -XPUT http://localhost:9200/gems
+$ curl -XGET 'http://localhost:9200/gems/test/lsJgxiwET6eg' | python -mjson.tool
+					</code></pre>
+					</p>
+					<p>
+					<pre><code data-trim>
+{
+    "_id": "lsJgxiwET6eg", 
+    "_index": "gems", 
+    "_source": {
+        "description": "attach an irb-like session to any object at runtime", 
+        "email": "anurag@example.com", 
+        "has_rdoc": true, 
+        "homepage": "http://banisterfiend.wordpress.com", 
+        "name": "pry", 
+        "platform": "ruby", 
+        "rubygems_version": "1.5.2"
+    }, 
+    "_type": "test", 
+    "_version": 1, 
+    "exists": true
+}
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Index another document</h2>
+					<p>
+					<pre><code data-trim>
+{
+  "name": "grit", 
+  "platform": "jruby", 
+  "rubygems_version": "2.5.0", 
+  "description": "Ruby library for extracting information from a git repository.", 
+  "email": "mojombo@github.com", 
+  "has_rdoc": false,
+  "homepage": "http://github.com/mojombo/grit"
+}
+
+					</code></pre>
+					<pre><code data-trim>
+$ curl -XPOST 'http://localhost:9200/gems/test/' -d @body.json
 					</code></pre>
 					</p>
 					<p>
 					<pre><code data-trim>
 {
   "ok":true,
-  "acknowledged":true
+  "_index":"gems",
+  "_type":"test",
+  "_id":"ijUOHi2cQc2",
+  "_version":1
 }
 					</code></pre>
 					</p>
 				</section>
 
 				<section>
-					<h2>Create Index</h2>
-					<p>
-					<pre><code data-trim>
-$ curl -XPUT http://localhost:9200/gems
-					</code></pre>
-					</p>
-					<p>
-					<pre><code data-trim>
-{
-  "ok":true,
-  "acknowledged":true
-}
-					</code></pre>
-					</p>
-				</section>
-
-				<section>
-					<h2>Create Index</h2>
+					<h2>Custom Document IDs</h2>
 					<p>
 					<pre><code data-trim>
 $ curl -XPUT http://localhost:9200/gems
