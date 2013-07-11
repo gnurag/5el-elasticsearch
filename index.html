@@ -932,15 +932,56 @@ $ curl -XPOST http://localhost:9200/gems/_search -d @body.json
 				</section>
 
 				<section>
+					<h2>(Lab)</h2>
 					<h2>Analyzing Aadhaar's Datasets</h2>
 				</section>
 
 				<section>
-					<h2>Download Sample Dataset</h2>
+					<h2>Download Public Dataset</h2>
+					<p>
+						Download from Aadhaar Public Data Portal at <a href="https://data.uidai.gov.in/uiddatacatalog/getDatsetInfo.do?dataset=UIDAI-ENR-DETAIL">https://data.uidai.gov.in</a>
+					</p>
+				</section>
+
+				<section>
+					<h2>Download Tools</h2>
+					<p>
+						$ git clone https://github.com/gnurag/aadhaar
+					</p>
+				</section>
+
+				<section>
+					<h2>Prepare Data & Configure</h2>
 					<p>
 					<pre><code data-trim>
-$ mkdir ~/aadhaar
+# gem install yajl-ruby tire activesupport
+
+$ git clone https://github.com/gnurag/aadhaar
+$ cd aadhaar/data
+$ unzip UIDAI-ENR-DETAIL-20121001.zip
+$ cd ../bin
+$ vi aadhaar.rb
 					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Configuration</h2>
+					<p>
+					<pre><code data-trim>
+AADHAAR_DATA_DIR = "/path/to/aadhaar/data"
+ES_URL           = "http://localhost:9200"
+ES_INDEX         = 'aadhaar'
+ES_TYPE          = "UID"
+BATCH_SIZE       = 1000
+					</code></pre>
+					</p>
+				</section>
+
+				<section>
+					<h2>Index</h2>
+					<p>
+						$ ruby aadhaar.rb
 					</p>
 				</section>
 
@@ -951,12 +992,25 @@ $ mkdir ~/aadhaar
 				<section>
 					<h2>Index Aliases</h2>
 					<p>
+						Group multiple Indexes, and query them together.
 					</p>
 				</section>
 
 				<section>
 					<h2>Document Routing</h2>
 					<p>
+						Control which Shard the document will be placed and queried from.
+					</p>
+				</section>
+
+				<section>
+					<h2>Parents & Children</h2>
+					<p>
+					<pre><code data-trim>
+$ curl -XPUT http://localhost:9200/gems/gem/roxml?parent=rexml -d '{
+    "tag" : "something"
+}'
+					</code></pre>
 					</p>
 				</section>
 
@@ -976,9 +1030,8 @@ $ mkdir ~/aadhaar
 					<h2>ElasticSearch Ecosystem</h2>
 					<p>
 						A wide range of site plugins, analyzers, river plugins available from the community.
-					</p>
+					</p>					
 				</section>
-
 
 				<section>
 					<h1>THE END</h1>
