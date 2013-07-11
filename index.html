@@ -986,6 +986,13 @@ BATCH_SIZE       = 1000
 				</section>
 
 				<section>
+					<h2>Running Examples</h2>
+					<p>
+						$ curl -XPOST http://localhost:9200/aadhaar/UID/_search -d @template.json | python -mjson.tool
+					</p>
+				</section>
+
+				<section>
 					<h2>Additional Notes</h2>
 				</section>
 
@@ -994,6 +1001,23 @@ BATCH_SIZE       = 1000
 					<p>
 						Group multiple Indexes, and query them together.
 					</p>
+					<pre><code data-trim>
+curl -XPOST 'http://localhost:9200/_aliases' -d '
+{
+    "actions" : [
+        { "add" : { "index" : "index1", "alias" : "master-alias" } }
+        { "add" : { "index" : "index2", "alias" : "master-alias" } }
+    ]
+}'
+					</code></pre>
+					<pre><code data-trim>
+curl -XPOST 'http://localhost:9200/_aliases' -d '
+{
+    "actions" : [
+        { "remove" : { "index" : "index2", "alias" : "master-alias" } }
+    ]
+}'
+					</code></pre>
 				</section>
 
 				<section>
